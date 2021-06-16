@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import lombok.*;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -19,6 +20,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("pico_promote_image")
+@Accessors(chain = true)
 public class PromoteImageDO implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -1,4 +1,5 @@
 package com.dukoia.boot.controller;
+import java.util.Date;
 
 
 import com.dukoia.boot.model.PromoteImageDO;
@@ -6,7 +7,6 @@ import com.dukoia.boot.service.PromoteImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -32,6 +32,7 @@ public class PromoteImageController {
     @GetMapping("put")
     public Object put(){
         PromoteImageDO picoPromoteImageDO = new PromoteImageDO();
+
         picoPromoteImageDO.setImageUrl("http://hello.com");
         picoPromoteImageDO.setSubjectName("master");
         picoPromoteImageDO.setCreateUser("dukoia");

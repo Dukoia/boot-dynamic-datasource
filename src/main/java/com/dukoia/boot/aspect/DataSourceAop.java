@@ -15,7 +15,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Description: DataSourceAop
@@ -71,12 +70,12 @@ public class DataSourceAop {
                 log.info("当前执行的库：" + SLAVE1);
                 DynamicDataSourceContextHolder.push(SLAVE1);
 
-            }else {
+            } else {
                 log.info("当前执行的库：" + SLAVE2);
                 DynamicDataSourceContextHolder.push(SLAVE2);
             }
             count++;
-            if (count == Integer.MAX_VALUE){
+            if (count == Integer.MAX_VALUE) {
                 count = 0;
             }
         } else {

@@ -36,7 +36,7 @@ public class MyBatisPlusGenerator {
                 // 文件覆盖
                 .setFileOverride(true)
                 // 主键策略
-                .setIdType(IdType.AUTO)
+                .setIdType(IdType.ASSIGN_ID)
 
                 .setDateType(DateType.ONLY_DATE)
                 // 设置生成的service接口的名字的首字母是否为I，默认Service是以I开头的
