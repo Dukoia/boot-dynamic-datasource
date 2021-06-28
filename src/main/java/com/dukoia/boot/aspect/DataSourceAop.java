@@ -15,6 +15,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.Random;
 
 /**
  * @Description: DataSourceAop
@@ -36,6 +37,7 @@ public class DataSourceAop {
     private static final String SLAVE2 = "slave2";
 
     private volatile Integer count = 0;
+    final Random random = new Random(10);
 
     @Pointcut("execution(* com.dukoia.boot.service..*.*(..)) " +
             "|| execution(* com.baomidou.mybatisplus.extension.service..*.*(..))")
@@ -65,8 +67,8 @@ public class DataSourceAop {
                 || methodName.startsWith("select")
                 || methodName.startsWith("check")
                 || methodName.startsWith("page")) {
-
-            if (count % 2 == 1) {
+           int router = random.nextInt();
+            if (router % 2 == 1) {
                 log.info("当前执行的库：" + SLAVE1);
                 DynamicDataSourceContextHolder.push(SLAVE1);
 

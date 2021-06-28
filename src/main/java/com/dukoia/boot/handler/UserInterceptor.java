@@ -19,7 +19,6 @@ public class UserInterceptor implements HandlerInterceptor {
             throws Exception {
         String authorization = request.getHeader("Authorization");
         UserContent.put(authorization);
-        log.info("[{}]",UserContent.get());
         return true;
     }
 
@@ -38,6 +37,6 @@ public class UserInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
                                 @Nullable Exception ex) throws Exception {
-        log.info(UserContent.get());
+        UserContent.clean();
     }
 }

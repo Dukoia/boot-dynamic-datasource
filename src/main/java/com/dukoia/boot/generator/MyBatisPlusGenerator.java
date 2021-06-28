@@ -72,17 +72,22 @@ public class MyBatisPlusGenerator {
         stConfig.setCapitalMode(true)
                 // 数据库表映射到实体的命名策略
                 .setNaming(NamingStrategy.underline_to_camel)
-
+                //字段常量
+                .setEntityColumnConstant(true)
+                //链式调用
+                .setChainModel(true)
                 //使用lombok
                 .setEntityLombokModel(true)
 
                 //使用restcontroller注解
-                .setRestControllerStyle(true).setTablePrefix(new String[] { "pico_", "tsys_" })
+                .setRestControllerStyle(true)
+
+                .setTablePrefix(new String[] { "pico_", "tsys_" })
 
                 // 生成的表, 支持多表一起生成，以数组形式填写
                 //TODO  TODO  TODO  TODO 两个方式，直接写，或者使用命令行输入
                 //方式 1
-                .setInclude("pico_promote_image");
+                .setInclude("config_info");
 //                .setInclude("banner","guanggao");
         //方式 2
         //.setInclude(scanner("请输入要生成的表，多个用,来分隔").split(","));
