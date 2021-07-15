@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dukoia.boot.mapper.ForumForumMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dukoia.boot.model.ForumForumDO">
+        <id column="fid" property="fid" />
+        <result column="fup" property="fup" />
+        <result column="moderatorUid" property="moderatorUid" />
+        <result column="type" property="type" />
+        <result column="name" property="name" />
+        <result column="status" property="status" />
+        <result column="displayorder" property="displayorder" />
+        <result column="styleid" property="styleid" />
+        <result column="threads" property="threads" />
+        <result column="posts" property="posts" />
+        <result column="todayposts" property="todayposts" />
+        <result column="yesterdayposts" property="yesterdayposts" />
+        <result column="rank" property="rank" />
+        <result column="oldrank" property="oldrank" />
+        <result column="lastpost" property="lastpost" />
+        <result column="domain" property="domain" />
+        <result column="allowsmilies" property="allowsmilies" />
+        <result column="allowhtml" property="allowhtml" />
+        <result column="allowbbcode" property="allowbbcode" />
+        <result column="allowimgcode" property="allowimgcode" />
+        <result column="allowmediacode" property="allowmediacode" />
+        <result column="allowanonymous" property="allowanonymous" />
+        <result column="allowpostspecial" property="allowpostspecial" />
+        <result column="allowspecialonly" property="allowspecialonly" />
+        <result column="allowappend" property="allowappend" />
+        <result column="alloweditrules" property="alloweditrules" />
+        <result column="allowfeed" property="allowfeed" />
+        <result column="allowside" property="allowside" />
+        <result column="recyclebin" property="recyclebin" />
+        <result column="modnewposts" property="modnewposts" />
+        <result column="jammer" property="jammer" />
+        <result column="disablewatermark" property="disablewatermark" />
+        <result column="inheritedmod" property="inheritedmod" />
+        <result column="autoclose" property="autoclose" />
+        <result column="forumcolumns" property="forumcolumns" />
+        <result column="catforumcolumns" property="catforumcolumns" />
+        <result column="threadcaches" property="threadcaches" />
+        <result column="alloweditpost" property="alloweditpost" />
+        <result column="simple" property="simple" />
+        <result column="modworks" property="modworks" />
+        <result column="allowglobalstick" property="allowglobalstick" />
+        <result column="level" property="level" />
+        <result column="commoncredits" property="commoncredits" />
+        <result column="archive" property="archive" />
+        <result column="recommend" property="recommend" />
+        <result column="favtimes" property="favtimes" />
+        <result column="sharetimes" property="sharetimes" />
+        <result column="disablethumb" property="disablethumb" />
+        <result column="disablecollect" property="disablecollect" />
+        <result column="pictureUrl" property="pictureUrl" />
+        <result column="faqid" property="faqid" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        fid, fup, moderatorUid, type, name, status, displayorder, styleid, threads, posts, todayposts, yesterdayposts, rank, oldrank, lastpost, domain, allowsmilies, allowhtml, allowbbcode, allowimgcode, allowmediacode, allowanonymous, allowpostspecial, allowspecialonly, allowappend, alloweditrules, allowfeed, allowside, recyclebin, modnewposts, jammer, disablewatermark, inheritedmod, autoclose, forumcolumns, catforumcolumns, threadcaches, alloweditpost, simple, modworks, allowglobalstick, level, commoncredits, archive, recommend, favtimes, sharetimes, disablethumb, disablecollect, pictureUrl, faqid
+    </sql>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dukoia.boot.mapper.ForumPostMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dukoia.boot.model.ForumPostDO">
+        <id column="pid" property="pid" />
+        <result column="parentid" property="parentid" />
+        <result column="fid" property="fid" />
+        <result column="tid" property="tid" />
+        <result column="first" property="first" />
+        <result column="author" property="author" />
+        <result column="authorid" property="authorid" />
+        <result column="subject" property="subject" />
+        <result column="dateline" property="dateline" />
+        <result column="message" property="message" />
+        <result column="content" property="content" />
+        <result column="useip" property="useip" />
+        <result column="port" property="port" />
+        <result column="invisible" property="invisible" />
+        <result column="anonymous" property="anonymous" />
+        <result column="usesig" property="usesig" />
+        <result column="htmlon" property="htmlon" />
+        <result column="bbcodeoff" property="bbcodeoff" />
+        <result column="smileyoff" property="smileyoff" />
+        <result column="parseurloff" property="parseurloff" />
+        <result column="attachment" property="attachment" />
+        <result column="rate" property="rate" />
+        <result column="ratetimes" property="ratetimes" />
+        <result column="status" property="status" />
+        <result column="tags" property="tags" />
+        <result column="comment" property="comment" />
+        <result column="replycredit" property="replycredit" />
+        <result column="position" property="position" />
+        <result column="isdeleted" property="isdeleted" />
+        <result column="type" property="type" />
+        <result column="commentPictureUrl" property="commentPictureUrl" />
+        <result column="appPictureUrl" property="appPictureUrl" />
+        <result column="operaid" property="operaid" />
+        <result column="operaname" property="operaname" />
+        <result column="modifyUser" property="modifyUser" />
+        <result column="modifyTime" property="modifyTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        pid, parentid, fid, tid, first, author, authorid, subject, dateline, message, content, useip, port, invisible, anonymous, usesig, htmlon, bbcodeoff, smileyoff, parseurloff, attachment, rate, ratetimes, status, tags, comment, replycredit, position, isdeleted, type, commentPictureUrl, appPictureUrl, operaid, operaname, modifyUser, modifyTime
+    </sql>
+
+</mapper>

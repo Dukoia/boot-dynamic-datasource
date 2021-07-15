@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dukoia.boot.mapper.CommonMemberMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dukoia.boot.model.CommonMemberDO">
+        <id column="uid" property="uid" />
+        <result column="email" property="email" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="status" property="status" />
+        <result column="emailstatus" property="emailstatus" />
+        <result column="avatarstatus" property="avatarstatus" />
+        <result column="videophotostatus" property="videophotostatus" />
+        <result column="adminid" property="adminid" />
+        <result column="groupid" property="groupid" />
+        <result column="groupexpiry" property="groupexpiry" />
+        <result column="extgroupids" property="extgroupids" />
+        <result column="regdate" property="regdate" />
+        <result column="credits" property="credits" />
+        <result column="notifysound" property="notifysound" />
+        <result column="timeoffset" property="timeoffset" />
+        <result column="newpm" property="newpm" />
+        <result column="newprompt" property="newprompt" />
+        <result column="accessmasks" property="accessmasks" />
+        <result column="allowadmincp" property="allowadmincp" />
+        <result column="onlyacceptfriendpm" property="onlyacceptfriendpm" />
+        <result column="conisbind" property="conisbind" />
+        <result column="freeze" property="freeze" />
+        <result column="allowbanuser" property="allowbanuser" />
+        <result column="bantime" property="bantime" />
+        <result column="avatar" property="avatar" />
+        <result column="uniqid" property="uniqid" />
+        <result column="regip" property="regip" />
+        <result column="phone" property="phone" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        uid, email, username, password, status, emailstatus, avatarstatus, videophotostatus, adminid, groupid, groupexpiry, extgroupids, regdate, credits, notifysound, timeoffset, newpm, newprompt, accessmasks, allowadmincp, onlyacceptfriendpm, conisbind, freeze, allowbanuser, bantime, avatar, uniqid, regip, phone
+    </sql>
+
+</mapper>

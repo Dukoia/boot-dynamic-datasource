@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dukoia.boot.mapper.ForumThreadMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dukoia.boot.model.ForumThreadDO">
+        <id column="tid" property="tid" />
+        <result column="fid" property="fid" />
+        <result column="posttableid" property="posttableid" />
+        <result column="typeid" property="typeid" />
+        <result column="sortid" property="sortid" />
+        <result column="readperm" property="readperm" />
+        <result column="price" property="price" />
+        <result column="author" property="author" />
+        <result column="authorid" property="authorid" />
+        <result column="subject" property="subject" />
+        <result column="dateline" property="dateline" />
+        <result column="lastpost" property="lastpost" />
+        <result column="lastposter" property="lastposter" />
+        <result column="views" property="views" />
+        <result column="replies" property="replies" />
+        <result column="displayorder" property="displayorder" />
+        <result column="highlight" property="highlight" />
+        <result column="digest" property="digest" />
+        <result column="rate" property="rate" />
+        <result column="special" property="special" />
+        <result column="attachment" property="attachment" />
+        <result column="moderated" property="moderated" />
+        <result column="closed" property="closed" />
+        <result column="stickreply" property="stickreply" />
+        <result column="recommends" property="recommends" />
+        <result column="recommend_add" property="recommendAdd" />
+        <result column="recommend_sub" property="recommendSub" />
+        <result column="heats" property="heats" />
+        <result column="status" property="status" />
+        <result column="isgroup" property="isgroup" />
+        <result column="favtimes" property="favtimes" />
+        <result column="sharetimes" property="sharetimes" />
+        <result column="stamp" property="stamp" />
+        <result column="icon" property="icon" />
+        <result column="pushedaid" property="pushedaid" />
+        <result column="cover" property="cover" />
+        <result column="replycredit" property="replycredit" />
+        <result column="relatebytag" property="relatebytag" />
+        <result column="maxposition" property="maxposition" />
+        <result column="bgcolor" property="bgcolor" />
+        <result column="comments" property="comments" />
+        <result column="hidden" property="hidden" />
+        <result column="topstarttime" property="topstarttime" />
+        <result column="topendtime" property="topendtime" />
+        <result column="isdeleted" property="isdeleted" />
+        <result column="deletedreason" property="deletedreason" />
+        <result column="topreason" property="topreason" />
+        <result column="digestreason" property="digestreason" />
+        <result column="recommendreason" property="recommendreason" />
+        <result column="recommend" property="recommend" />
+        <result column="likes" property="likes" />
+        <result column="pictureurl" property="pictureurl" />
+        <result column="videourl" property="videourl" />
+        <result column="type" property="type" />
+        <result column="publishstatus" property="publishstatus" />
+        <result column="url" property="url" />
+        <result column="auditName" property="auditName" />
+        <result column="auditId" property="auditId" />
+        <result column="auditTime" property="auditTime" />
+        <result column="topicName" property="topicName" />
+        <result column="topicId" property="topicId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        tid, fid, posttableid, typeid, sortid, readperm, price, author, authorid, subject, dateline, lastpost, lastposter, views, replies, displayorder, highlight, digest, rate, special, attachment, moderated, closed, stickreply, recommends, recommend_add, recommend_sub, heats, status, isgroup, favtimes, sharetimes, stamp, icon, pushedaid, cover, replycredit, relatebytag, maxposition, bgcolor, comments, hidden, topstarttime, topendtime, isdeleted, deletedreason, topreason, digestreason, recommendreason, recommend, likes, pictureurl, videourl, type, publishstatus, url, auditName, auditId, auditTime, topicName, topicId
+    </sql>
+
+</mapper>
