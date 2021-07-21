@@ -87,7 +87,6 @@ public abstract class AbstractCacheManager<K, V> {
                                 }
                             });
         }
-
         return cache;
     }
 

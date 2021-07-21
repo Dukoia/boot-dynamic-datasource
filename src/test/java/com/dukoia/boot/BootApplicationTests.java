@@ -2,11 +2,15 @@ package com.dukoia.boot;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.Master;
 import com.dukoia.boot.content.UserContent;
 import com.dukoia.boot.mapper.ConfigInfoMapper;
 import com.dukoia.boot.model.PromoteImageDO;
+import com.dukoia.boot.model.UserInfo;
 import com.dukoia.boot.service.ConfigInfoService;
+import com.dukoia.boot.service.IUserInfoService;
 import com.dukoia.boot.service.PromoteImageService;
+import com.dukoia.boot.utils.JacksonUtil;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +29,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.util.Assert;
 
+import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,6 +59,29 @@ class BootApplicationTests {
     @Autowired
     ConfigInfoMapper mapper;
 
+    @Autowired
+    IUserInfoService iUserInfoService;
+
+    @Test
+    @DS("master")
+    public void userinfo(){
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("duko211");
+        userInfo.setGender(1);
+        userInfo.setEmail("hhaha12111@sina.com");
+        userInfo.setVersion(1);
+        iUserInfoService.save(userInfo);
+//        iUserInfoService.updateById(userInfo);
+
+        List<UserInfo> list = iUserInfoService.list();
+        System.out.println(JacksonUtil.toJson(list));
+//        boolean save = iUserInfoService.save(userInfo);
+//        System.out.println(save);
+
+//        boolean b = iUserInfoService.removeById(1417304903917359105L);
+//        System.out.println(b);
+    }
+
     @Test
     public void filter(){
         BloomFilter<CharSequence> bloomFilter  = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()),1000,0.0000001);
@@ -61,7 +93,12 @@ class BootApplicationTests {
     @Test
     @DS("master")
     public void addDoc(){
+        Date date = new Date();
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(date + "--" + now);
+        @NotBlank String s= "";
 
+        System.out.println("========");
 //        List<ForumDto> forums = configInfoMapper.get();
 //
 //        BulkRequest request = new BulkRequest();

@@ -1,6 +1,7 @@
 package com.dukoia.boot.generator;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -9,9 +10,12 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -89,6 +93,15 @@ public class MyBatisPlusGenerator {
                 //方式 1
                 .setInclude("config_info");
 //                .setInclude("banner","guanggao");
+        stConfig.setLogicDeleteFieldName("dr");
+        stConfig.setVersionFieldName("version");
+
+        List<TableFill> tableFillList = new ArrayList<>();
+        tableFillList.add(new TableFill("create_time", FieldFill.INSERT));
+        tableFillList.add(new TableFill("update_time", FieldFill.INSERT_UPDATE));
+        tableFillList.add(new TableFill("ts", FieldFill.INSERT_UPDATE));
+        stConfig.setTableFillList(tableFillList);
+
         //方式 2
         //.setInclude(scanner("请输入要生成的表，多个用,来分隔").split(","));
 
