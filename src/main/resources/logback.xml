@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" period="60000">
+<!--    <include resource="org/springframework/boot/logging/logback/defaults.xml" />-->
+    <property name="log.base" value="logs/"/>
+    <conversionRule conversionWord="clr"
+                    converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <property name="Console_Log_Pattern" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr(%X{mark}) %clr(%-40.40logger{36}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+<!--            <pattern>-->
+<!--&lt;!&ndash;                %date{yyyy-MM-dd HH:mm:ss.SSS} %t %X{req.id} %-5level %logger{36} - %msg%n&ndash;&gt;-->
+<!--                %date{yyyy-MM-dd HH:mm:ss.SSS} %t %X{mark} %-5level %logger{36} - %msg%n-->
+
+<!--            </pattern>-->
+            <pattern>${Console_Log_Pattern}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+
+    </appender>
+
+
+    <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!--        <file>${log.base}.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.base}%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+            <maxFileSize>100MB</maxFileSize>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>
+                %date{yyyy-MM-dd HH:mm:ss.SSS} %t %X{mark} %-5level %logger{36} - %msg%n
+            </pattern>
+<!--            <pattern>${Console_Log_Pattern}</pattern>-->
+        </encoder>
+    </appender>
+
+    <!-- 自定义特殊包的日志级别 -->
+<!--    <logger name="org.springframework.kafka" level="off"/>-->
+<!--    <logger name="org.apache.kafka" level="off"/>-->
+<!--    <logger name="org.apache.zookeeper" level="off"/>-->
+    <logger name="com.zaxxer.hikari.pool.HikariPool" level="error"/>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="rollingFile"/>
+    </root>
+</configuration>

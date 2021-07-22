@@ -47,9 +47,6 @@ spring:
   elasticsearch:
     rest:
       uris: 172.31.84:9200
-  http:
-    encoding:
-      force: true
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
   global-config:

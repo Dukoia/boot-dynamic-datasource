@@ -1,7 +1,9 @@
 package com.dukoia.boot.common;
 
+import com.dukoia.boot.content.UserContent;
 import com.dukoia.boot.enums.ReturnCode;
 import lombok.Data;
+import org.apache.logging.log4j.ThreadContext;
 
 /**
  * @Description: Result
@@ -15,10 +17,12 @@ public class Result<T> {
     private int status;
     private String message;
     private T data;
-    private long timestamp ;
+    private long timestamp;
+    private String mark;
 
-    public Result(){
+    public Result() {
         this.timestamp = System.currentTimeMillis();
+        this.mark = ThreadContext.get("mark");
     }
 
     public static <T> Result<T> success(T data) {
@@ -43,7 +47,7 @@ public class Result<T> {
         return resultData;
     }
 
-    public Boolean success(){
+    public Boolean success() {
         return ReturnCode.RC100.getCode() == this.status;
     }
 }

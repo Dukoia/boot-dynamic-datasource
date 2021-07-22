@@ -1,5 +1,8 @@
 package com.dukoia.boot.content;
 
+/**
+ * @author jiangze.he
+ */
 public class UserContent {
 
     private static ThreadLocal<String> map = new ThreadLocal<>();

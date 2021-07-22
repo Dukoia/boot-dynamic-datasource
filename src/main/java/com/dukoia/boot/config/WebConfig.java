@@ -1,5 +1,9 @@
 package com.dukoia.boot.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -8,12 +12,16 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,35 +32,25 @@ import java.util.Locale;
  * @Version: v1.0
  */
 @Configuration
-@Component
-@Order(Integer.MIN_VALUE)
+//@Order(Integer.MIN_VALUE)
+//@EnableWebMvc
 public class WebConfig extends WebMvcConfigurationSupport {
 
+    @Bean
+    public HttpMessageConverter<String> responseBodyConverter() {
+        return new StringHttpMessageConverter(StandardCharsets.UTF_8);
+    }
     @Override
-    protected void addInterceptors(InterceptorRegistry registry) {
-        // 实例化一个Locale拦截器
-        // ... addInterceptors
-        LocaleChangeInterceptor localeInterceptor = new LocaleChangeInterceptor();
-        // 设置获取Locale的参数是lang，默认情况下因为使用的是AcceptHeaderLocaleResolver，
-        // 所以这个参数是Accept-Language
-        localeInterceptor.setParamName("lang");
-        // 忽略不合法的Locale，比如zh_CNs不是合法的，你将无法通过LocaleContextHolder.getLocale
-        // 得到它
-        localeInterceptor.setIgnoreInvalidLocale(true);
-        registry.addInterceptor(localeInterceptor);
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(responseBodyConverter());
+        // 这里必须加上加载默认转换器，不然bug玩死人，并且该bug目前在网络上似乎没有解决方案
+        // 百度，谷歌，各大论坛等。你可以试试去掉。如果这段代码，spring启动后消息转换器只有StringHttpMessageConverter这一个
+        addDefaultHttpMessageConverters(converters);
     }
 
-
     @Override
-    protected void extendMessageConverters(
-            List<HttpMessageConverter<?>> converters) {
-
-        converters.stream()
-                // 过滤出StringHttpMessageConverter类型实例
-                .filter(MappingJackson2HttpMessageConverter.class::isInstance)
-                .map(c -> (MappingJackson2HttpMessageConverter) c)
-                // 这里将转换器的默认编码设置为utf-8
-                .forEach(c -> c.setDefaultCharset(StandardCharsets.UTF_8));
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.favorPathExtension(false);
     }
 
 
@@ -68,4 +66,23 @@ public class WebConfig extends WebMvcConfigurationSupport {
         localeResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
         return localeResolver;
     }
+
+//    /**
+//     * 将返回给前端的Long和long，统一转化成字符串
+//     *
+//     * @return
+//     */
+//    @Bean
+//    public MappingJackson2HttpMessageConverter longToStringConverter() {
+//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+//        ObjectMapper mapper = new ObjectMapper();
+//        SimpleModule simpleModule = new SimpleModule();
+//        //Long
+//        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+//        //long
+//        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+//        mapper.registerModule(simpleModule);
+//        converter.setObjectMapper(mapper);
+//        return converter;
+//    }
 }
