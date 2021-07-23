@@ -1,8 +1,11 @@
 package com.dukoia.boot.handler;
 
 import cn.hutool.core.lang.UUID;
+import cn.hutool.json.JSONUtil;
 import com.dukoia.boot.common.AccessLimit;
+import com.dukoia.boot.common.Result;
 import com.dukoia.boot.content.UserContent;
+import com.dukoia.boot.enums.ReturnCode;
 import com.dukoia.boot.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
@@ -10,27 +13,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author jiangze.he
  */
-@Component
+//@Component
 @Slf4j
 public class UserInterceptor implements HandlerInterceptor {
 
     @Autowired
-    @Resource(name = "redisTemplate")
     RedisTemplate redisTemplate;
 
 
@@ -57,7 +58,19 @@ public class UserInterceptor implements HandlerInterceptor {
             int limit = accessLimit.limit();
             int sec = accessLimit.sec();
             String key = request.getRequestURI() + ":" + IpUtil.getIpAddr(request);
-            return isPeriodLimiting(key, sec, limit);
+            if (!isPeriodLimiting(key, sec, limit)) {
+                response.reset();
+                //设置编码格式
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json;charset=UTF-8");
+
+                PrintWriter writer = response.getWriter();
+                writer.write(JSONUtil.toJsonStr(Result.fail(ReturnCode.RC200)));
+                writer.flush();
+                writer.close();
+                return false;
+            }
+            return true;
         }
 
         return true;
