@@ -2,7 +2,6 @@ package com.dukoia.boot;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.Master;
 import com.dukoia.boot.content.UserContent;
 import com.dukoia.boot.mapper.ConfigInfoMapper;
 import com.dukoia.boot.model.PromoteImageDO;
@@ -29,7 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.util.Assert;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
@@ -38,8 +38,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @SpringBootTest
 @Slf4j
@@ -63,8 +62,78 @@ class BootApplicationTests {
     IUserInfoService iUserInfoService;
 
     @Test
+    public void limit() throws InterruptedException {
+
+        for (int i = 0; i < 15; i++) {
+            boolean res = isPeriodLimiting("java", 3, 10);
+            if (res) {
+                System.out.println("正常执行请求：" + i);
+            } else {
+                System.out.println("被限流：" + i);
+            }
+        }
+        // 休眠 4s
+        Thread.sleep(4000);
+        // 超过最大执行时间之后，再从发起请求
+        boolean res = isPeriodLimiting("java", 3, 10);
+        if (res) {
+            System.out.println("休眠后，正常执行请求");
+        } else {
+            System.out.println("休眠后，被限流");
+        }
+    }
+
+    /**
+     * 限流方法（滑动时间算法）
+     *
+     * @param key      限流标识
+     * @param period   限流时间范围（单位：秒）
+     * @param maxCount 最大运行访问次数
+     * @return
+     */
+    private boolean isPeriodLimiting(@Nullable String key, int period, int maxCount) {
+        long nowTs = System.currentTimeMillis(); // 当前时间戳
+        // 删除非时间段内的请求数据（清除老访问数据，比如 period=60 时，标识清除 60s 以前的请求记录）
+        ZSetOperations zSetOperations = redisTemplate.opsForZSet();
+        zSetOperations.removeRangeByScore(key, 0, nowTs - period * 1000);
+        long currCount = zSetOperations.zCard(key);// 当前请求次数
+        if (currCount >= maxCount) {
+            // 超过最大请求次数，执行限流
+            return false;
+        }
+        // 未达到最大请求数，正常执行业务
+        zSetOperations.add(key, nowTs, nowTs);
+        redisTemplate.expire(key, 100, TimeUnit.SECONDS);
+        return true;
+    }
+
+    @Test
+    public void future() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> string = CompletableFuture.supplyAsync(() -> {
+            return "hello";
+        });
+        CompletableFuture<List<UserInfo>> list = CompletableFuture.supplyAsync(() -> {
+            return iUserInfoService.list();
+        });
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("11111");
+        });
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(future, string, list);
+        allOf.join();
+
+        System.out.println(string.get());
+        System.out.println(JSONUtil.toJsonStr(list.get()));
+        System.out.println(JacksonUtil.toJson(list.get()));
+    }
+
+    @Test
     @DS("master")
-    public void userinfo(){
+    public void userinfo() {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("duko211");
         userInfo.setGender(1);
@@ -83,20 +152,20 @@ class BootApplicationTests {
     }
 
     @Test
-    public void filter(){
-        BloomFilter<CharSequence> bloomFilter  = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()),1000,0.0000001);
+    public void filter() {
+        BloomFilter<CharSequence> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), 1000, 0.0000001);
         bloomFilter.put("abc");
-        boolean  isContains = bloomFilter.mightContain("abc");
-        System.out.println(isContains );
+        boolean isContains = bloomFilter.mightContain("abc");
+        System.out.println(isContains);
     }
 
     @Test
     @DS("master")
-    public void addDoc(){
+    public void addDoc() {
         Date date = new Date();
         LocalDateTime now = LocalDateTime.now();
         System.out.println(date + "--" + now);
-        @NotBlank String s= "";
+        @NotBlank String s = "";
 
         System.out.println("========");
 //        List<ForumDto> forums = configInfoMapper.get();
@@ -138,6 +207,7 @@ class BootApplicationTests {
         }
 
     }
+
     @Test
     public void es() throws IOException {
         SearchRequest commodity = new SearchRequest("commodity");
@@ -151,21 +221,22 @@ class BootApplicationTests {
     }
 
     @Test
-    public void redis(){
+    public void redis() {
         HashOperations hashOperations = redisTemplate.opsForHash();
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        valueOperations.set("hello","hello");
+        valueOperations.set("hello", "hello");
 
         System.out.println(valueOperations.get("hello"));
 
-        hashOperations.put("dukoia","name","dukoia123");
+        hashOperations.put("dukoia", "name", "dukoia123");
         System.out.println(hashOperations.get("dukoia", "age"));
         Map dukoia = hashOperations.entries("dukoia");
         System.out.println(dukoia);
 
     }
+
     @Test
-    public void put(){
+    public void put() {
         PromoteImageDO picoPromoteImageDO = new PromoteImageDO();
 
         picoPromoteImageDO.setImageUrl("http://hello.com");
@@ -181,7 +252,7 @@ class BootApplicationTests {
 //        executorService.submit(() -> {
 //            System.out.println("==========");
 //        });
-        executorService.execute(() ->{
+        executorService.execute(() -> {
             System.out.println("========");
             UserContent.put("123");
 
@@ -190,10 +261,10 @@ class BootApplicationTests {
         UserContent.put("123");
         System.out.println("11111" + UserContent.get());
 
-        executorService.execute(() ->{
+        executorService.execute(() -> {
             try {
                 System.out.println("222" + UserContent.get());
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

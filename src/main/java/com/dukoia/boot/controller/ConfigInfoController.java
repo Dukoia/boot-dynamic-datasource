@@ -1,6 +1,7 @@
 package com.dukoia.boot.controller;
 
 
+import com.dukoia.boot.common.AccessLimit;
 import com.dukoia.boot.common.BizException;
 import com.dukoia.boot.common.ResponseCodeI18n;
 import com.dukoia.boot.common.Result;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/config")
+@AccessLimit(sec = 10)
 public class ConfigInfoController {
 
     @Autowired
@@ -34,6 +36,7 @@ public class ConfigInfoController {
     }
 
     @GetMapping(value = "/string")
+    @AccessLimit(sec = 10)
     public Result string() {
         return Result.success( "哈哈");
     }

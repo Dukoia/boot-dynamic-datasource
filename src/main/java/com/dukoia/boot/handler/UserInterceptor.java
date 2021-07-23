@@ -1,16 +1,26 @@
 package com.dukoia.boot.handler;
 
 import cn.hutool.core.lang.UUID;
+import com.dukoia.boot.common.AccessLimit;
 import com.dukoia.boot.content.UserContent;
+import com.dukoia.boot.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jiangze.he
@@ -19,14 +29,63 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class UserInterceptor implements HandlerInterceptor {
 
+    @Autowired
+    @Resource(name = "redisTemplate")
+    RedisTemplate redisTemplate;
+
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
         String authorization = request.getHeader("Authorization");
         String uid = UUID.randomUUID().toString().replace("-", "");
         UserContent.put(uid);
         ThreadContext.put("mark", uid);
+
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Method method = handlerMethod.getMethod();
+            AccessLimit methodAnnotation = handlerMethod.getMethodAnnotation(AccessLimit.class);
+            boolean b = handlerMethod.hasMethodAnnotation(AccessLimit.class);
+            if (!method.isAnnotationPresent(AccessLimit.class)) {
+                return true;
+            }
+            AccessLimit accessLimit = method.getAnnotation(AccessLimit.class);
+            if (accessLimit == null) {
+                return true;
+            }
+            int limit = accessLimit.limit();
+            int sec = accessLimit.sec();
+            String key = request.getRequestURI() + ":" + IpUtil.getIpAddr(request);
+            return isPeriodLimiting(key, sec, limit);
+        }
+
+        return true;
+    }
+
+    /**
+     * 限流方法（滑动时间算法）
+     *
+     * @param key      限流标识
+     * @param period   限流时间范围（单位：秒）
+     * @param maxCount 最大运行访问次数
+     * @return
+     */
+    private boolean isPeriodLimiting(@Nullable String key, int period, int maxCount) {
+        long nowTs = System.currentTimeMillis();
+        // 删除非时间段内的请求数据（清除老访问数据，比如 period=60 时，标识清除 60s 以前的请求记录）
+        ZSetOperations zSetOperations = redisTemplate.opsForZSet();
+        Assert.notNull(key, "限流接口参数不为空");
+        zSetOperations.removeRangeByScore(key, 0, nowTs - period * 1000L);
+        // 当前请求次数
+        long currCount = zSetOperations.zCard(key);
+        if (currCount >= maxCount) {
+            // 超过最大请求次数，执行限流
+            return false;
+        }
+        // 未达到最大请求数，正常执行业务
+        zSetOperations.add(key, nowTs, nowTs);
+        redisTemplate.expire(key, 100, TimeUnit.SECONDS);
         return true;
     }
 
