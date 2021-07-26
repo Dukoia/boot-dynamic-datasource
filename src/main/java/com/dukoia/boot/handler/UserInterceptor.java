@@ -7,6 +7,7 @@ import com.dukoia.boot.common.Result;
 import com.dukoia.boot.content.UserContent;
 import com.dukoia.boot.enums.ReturnCode;
 import com.dukoia.boot.utils.IpUtil;
+import com.dukoia.boot.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,6 @@ public class UserInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
-            AccessLimit methodAnnotation = handlerMethod.getMethodAnnotation(AccessLimit.class);
-            boolean b = handlerMethod.hasMethodAnnotation(AccessLimit.class);
             if (!method.isAnnotationPresent(AccessLimit.class)) {
                 return true;
             }
@@ -57,7 +56,7 @@ public class UserInterceptor implements HandlerInterceptor {
             }
             int limit = accessLimit.limit();
             int sec = accessLimit.sec();
-            String key = request.getRequestURI() + ":" + IpUtil.getIpAddr(request);
+            String key = request.getRequestURI().replace("/","_").toUpperCase() + ":" + IpUtil.getIpAddr(request);
             if (!isPeriodLimiting(key, sec, limit)) {
                 response.reset();
                 //设置编码格式
@@ -65,7 +64,7 @@ public class UserInterceptor implements HandlerInterceptor {
                 response.setContentType("application/json;charset=UTF-8");
 
                 PrintWriter writer = response.getWriter();
-                writer.write(JSONUtil.toJsonStr(Result.fail(ReturnCode.RC200)));
+                writer.write(JacksonUtil.toJson(Result.fail(ReturnCode.SERVER_BUSY)));
                 writer.flush();
                 writer.close();
                 return false;
@@ -109,7 +108,7 @@ public class UserInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            @Nullable ModelAndView modelAndView) throws Exception {
         UserContent.clean();
-        log.info("postHandle clean 之后 mark:{}", UserContent.get());
+//        log.info("postHandle clean 之后 mark:{}", UserContent.get());
     }
 
     /**
@@ -119,6 +118,6 @@ public class UserInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
                                 @Nullable Exception ex) throws Exception {
         UserContent.clean();
-        log.info("afterCompletion clean 之后 mark:{}", UserContent.get());
+//        log.info("afterCompletion clean 之后 mark:{}", UserContent.get());
     }
 }
