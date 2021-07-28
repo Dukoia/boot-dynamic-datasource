@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dukoia.boot.mapper.ForumThreadMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        tid, fid, posttableid, typeid, sortid, readperm, price, author, authorid, subject, dateline, lastpost, lastposter, views, replies, displayorder, highlight, digest, rate, special, attachment, moderated, closed, stickreply, recommends, recommend_add, recommend_sub, heats, status, isgroup, favtimes, sharetimes, stamp, icon, pushedaid, cover, replycredit, relatebytag, maxposition, bgcolor, comments, hidden, topstarttime, topendtime, isdeleted, deletedreason, topreason, digestreason, recommendreason, recommend, likes, pictureurl, videourl, type, publishstatus, url, auditName, auditId, auditTime
+    </sql>
+
+</mapper>
