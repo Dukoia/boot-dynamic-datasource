@@ -191,7 +191,7 @@ class BootApplicationTests {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         //搜索方式 在[subject, message]字段上搜索，匹配度=50%、将标题得分提高10倍
-        MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery("美国", "subject", "message");
+        MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery("美国", "subject", "message").field("subject",50);
 
         searchSourceBuilder.query(multiMatchQueryBuilder);
 
