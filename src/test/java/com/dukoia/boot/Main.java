@@ -17,15 +17,17 @@ public class Main {
 //        future();
 //        System.out.println(isUnique("nihaoa"));
 //        future2();
-        ArrayList<UserInfo> userInfos = new ArrayList<>();
-        userInfos.add(new UserInfo());
-        long count = userInfos.stream().map(UserInfo::getId).distinct().count();
-        int t = 773;
-        for (int i = 1; i <= 773; i++) {
-            if (773 % i == 0) {
-                System.out.println(i);
-            }
-        }
+
+        System.out.println(773 << 1 & 773);
+//        ArrayList<UserInfo> userInfos = new ArrayList<>();
+//        userInfos.add(new UserInfo());
+//        long count = userInfos.stream().map(UserInfo::getId).distinct().count();
+//        int t = 773;
+//        for (int i = 1; i <= 773; i++) {
+//            if (773 % i == 0) {
+//                System.out.println(i);
+//            }
+//        }
     }
 
     private static void future2() throws InterruptedException, java.util.concurrent.ExecutionException {

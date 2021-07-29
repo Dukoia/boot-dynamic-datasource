@@ -68,7 +68,7 @@ public class DataSourceAop {
                 || methodName.startsWith("check")
                 || methodName.startsWith("page")) {
            int router = random.nextInt();
-            if (router % 2 == 1) {
+            if ((router & 1) == 0) {
                 log.info("当前执行的库：" + SLAVE1);
                 DynamicDataSourceContextHolder.push(SLAVE1);
 
@@ -76,10 +76,10 @@ public class DataSourceAop {
                 log.info("当前执行的库：" + SLAVE2);
                 DynamicDataSourceContextHolder.push(SLAVE2);
             }
-            count++;
-            if (count == Integer.MAX_VALUE) {
-                count = 0;
-            }
+//            count++;
+//            if (count == Integer.MAX_VALUE) {
+//                count = 0;
+//            }
         } else {
             log.info("当前执行的库：" + MASTER);
             DynamicDataSourceContextHolder.push(MASTER);
