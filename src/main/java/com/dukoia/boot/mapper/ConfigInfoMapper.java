@@ -1,5 +1,6 @@
 package com.dukoia.boot.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.dukoia.boot.model.ConfigInfoDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,6 +18,7 @@ import java.util.List;
  * @since 2021-06-16
  */
 @Mapper
+@DS("master")
 public interface ConfigInfoMapper extends BaseMapper<ConfigInfoDO> {
 
 }

@@ -25,10 +25,10 @@ import java.util.Scanner;
 @Slf4j
 public class MpGenerator {
     private static String author = "Dukoia";
-    private static String dbUrl = "127.0.0.1:3306";
-    private static String dbSchema = "master";
-    private static String dbUserName = "root";
-    private static String dbPwd = "root";
+    private static String dbUrl = "rm-2zen0a0g63p5r3xu5ho.mysql.rds.aliyuncs.com";
+    private static String dbSchema = "db_pico_bbs_prod";
+    private static String dbUserName = "bbs_prod";
+    private static String dbPwd = "sDsd33$4hdagHdsa@1hg";
 
     /**
      * <p>
@@ -101,7 +101,7 @@ public class MpGenerator {
         strategy.setTablePrefix(new String[] { "pico_", "tsys_" });
 
 //        strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
-        strategy.setInclude("user_info");
+        strategy.setInclude("pico_forum_post");
 //        if (pc.getModuleName() != null) {
 //            strategy.setTablePrefix(pc.getModuleName() + "_");
 //        }

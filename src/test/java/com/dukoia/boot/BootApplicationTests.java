@@ -2,8 +2,10 @@ package com.dukoia.boot;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dukoia.boot.content.UserContent;
 import com.dukoia.boot.mapper.ConfigInfoMapper;
+import com.dukoia.boot.model.ConfigInfoDO;
 import com.dukoia.boot.model.PromoteImageDO;
 import com.dukoia.boot.model.UserInfo;
 import com.dukoia.boot.service.ConfigInfoService;
@@ -49,6 +51,9 @@ class BootApplicationTests {
     @Autowired
     PromoteImageService promoteImageService;
 
+//    @Autowired
+//    PromoteImageMapper promoteImageMapper;
+
     @Autowired
     RestHighLevelClient restHighLevelClient;
 
@@ -60,6 +65,16 @@ class BootApplicationTests {
 
     @Autowired
     IUserInfoService iUserInfoService;
+
+    @Test
+    @DS("master")
+    public void apply(){
+        QueryWrapper<ConfigInfoDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("YEAR(gmt_create) = {0}",2019).orderByAsc("gmt_create").last("limit 1");
+
+        List<ConfigInfoDO> list = configInfoMapper.list(queryWrapper);
+        System.out.println(list);
+    }
 
     @Test
     public void limit() throws InterruptedException {

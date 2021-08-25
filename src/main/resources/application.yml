@@ -1,5 +1,12 @@
 server:
   port: 9000
+  tomcat:
+    uri-encoding: UTF-8
+    threads:
+      max: 8  #最大并发数，最佳线程数目 = （（线程等待时间+线程CPU时间）/线程CPU时间 ）* CPU数目，1、CPU密集型：操作内存处理的业务，一般线程数设置为：CPU核数 + 1 或者 CPU核数*2。核数为4的话，一般设置 5 或 8 。 2、IO密集型：文件操作，网络操作，数据库操作，一般线程设置为：cpu核数 / (1-0.9)，核数为4的话，一般设置 40
+      min-spare: 5
+    max-connections: 20000   #接受和处理的最大连接数
+    acceptCount: 700         #可以放到处理队列中的请求数
 
 spring:
   datasource:

@@ -2,9 +2,9 @@ package com.dukoia.boot;
 
 import com.dukoia.boot.model.UserInfo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @Description: Main
@@ -13,10 +13,13 @@ import java.util.concurrent.TimeUnit;
  * @Version: v1.0
  */
 public class Main {
+
+    public static final ExecutorService executorService = Executors.newFixedThreadPool(5);
+
     public static void main(String[] args) throws Exception {
-//        future();
+        future();
 //        System.out.println(isUnique("nihaoa"));
-//        future2();
+        future2();
 
         System.out.println(773 << 1 & 773);
 //        ArrayList<UserInfo> userInfos = new ArrayList<>();
@@ -30,10 +33,16 @@ public class Main {
 //        }
     }
 
+
     private static void future2() throws InterruptedException, java.util.concurrent.ExecutionException {
         CompletableFuture<String> string = CompletableFuture.supplyAsync(() -> {
-            return "hello";
+            return queryCode("hello");
+        }, executorService);
+
+        CompletableFuture<String> future1 = string.thenApply((s) -> {
+            return queryCode(s + "then");
         });
+
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(5);
@@ -44,6 +53,7 @@ public class Main {
         });
         CompletableFuture<Void> a = CompletableFuture.allOf(future, string);
         a.join();
+        System.out.println(future1.get());
         System.out.println(string.get());
     }
 
@@ -60,19 +70,27 @@ public class Main {
         return true;
     }
 
-    private static void future() throws InterruptedException {
+    private static void future() throws InterruptedException, ExecutionException {
         // 第一个任务:
         CompletableFuture<String> cfQuery = CompletableFuture.supplyAsync(() -> {
             return queryCode("中国石油");
         });
-
+        CompletableFuture<? extends Serializable> handle = cfQuery.handle((x, y) -> {
+            if (y != null) {
+                y.printStackTrace();
+                return 0;
+            }
+            return x + 100;
+        });
+        String i = (String) handle.get();
+        System.out.println(i);
         // cfQuery成功后继续执行下一个任务:
         CompletableFuture<Double> cfFetch = cfQuery.thenApplyAsync(Main::fetchPrice);
         // cfFetch成功后打印结果:
         cfFetch.thenAccept((result) -> {
             System.out.println("price: " + result);
         });
-        CompletableFuture.allOf(cfFetch, cfQuery);
+        CompletableFuture.allOf(cfFetch, cfQuery).join();
         // 主线程不要立刻结束，否则CompletableFuture默认使用的线程池会立刻关闭:
         Thread.sleep(2000);
     }

@@ -1,6 +1,5 @@
 package com.dukoia.boot.common;
 
-import com.dukoia.boot.content.UserContent;
 import com.dukoia.boot.enums.ReturnCode;
 import lombok.Data;
 import org.apache.logging.log4j.ThreadContext;

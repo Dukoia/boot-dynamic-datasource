@@ -67,7 +67,7 @@ public class DataSourceAop {
                 || methodName.startsWith("select")
                 || methodName.startsWith("check")
                 || methodName.startsWith("page")) {
-           int router = random.nextInt();
+            int router = random.nextInt();
             if ((router & 1) == 0) {
                 log.info("当前执行的库：" + SLAVE1);
                 DynamicDataSourceContextHolder.push(SLAVE1);
