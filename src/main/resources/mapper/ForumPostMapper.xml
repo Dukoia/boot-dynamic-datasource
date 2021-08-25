@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dukoia.boot.mapper.ForumPostMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        pid, parentid, fid, tid, first, author, authorid, subject, dateline, message, content, useip, port, invisible, anonymous, usesig, htmlon, bbcodeoff, smileyoff, parseurloff, attachment, rate, ratetimes, status, tags, comment, replycredit, position, isdeleted, type, commentPictureUrl, appPictureUrl, operaid, operaname, modifyUser, modifyTime
+    </sql>
+
+</mapper>
