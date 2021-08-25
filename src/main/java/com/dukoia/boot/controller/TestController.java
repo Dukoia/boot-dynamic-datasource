@@ -1,14 +1,12 @@
 package com.dukoia.boot.controller;
 
-import com.dukoia.boot.common.BizException;
-import com.dukoia.boot.common.ResponseCodeI18n;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description: TestController
@@ -22,10 +20,15 @@ import java.util.concurrent.TimeUnit;
 public class TestController {
 
     @GetMapping("/error")
-    public String error() throws InterruptedException {
+    public Object error() throws InterruptedException {
         log.info("thread:{} come in", Thread.currentThread().getName());
-        TimeUnit.SECONDS.sleep(20);
+        return "真好";
+    }
 
-        return "hhhh";
+    @GetMapping("/error1")
+    public List<String> error1() throws InterruptedException {
+        log.info("thread:{} come in", Thread.currentThread().getName());
+
+        return Arrays.asList("真好");
     }
 }

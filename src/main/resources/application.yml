@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 9009
   tomcat:
     uri-encoding: UTF-8
     threads:

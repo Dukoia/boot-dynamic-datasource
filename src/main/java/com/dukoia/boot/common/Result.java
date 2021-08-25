@@ -2,6 +2,7 @@ package com.dukoia.boot.common;
 
 import com.dukoia.boot.enums.ReturnCode;
 import lombok.Data;
+import lombok.ToString;
 import org.apache.logging.log4j.ThreadContext;
 
 /**
@@ -11,6 +12,7 @@ import org.apache.logging.log4j.ThreadContext;
  * @Version: v1.0
  */
 @Data
+@ToString
 public class Result<T> {
 
     private int status;
