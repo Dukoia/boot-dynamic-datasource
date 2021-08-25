@@ -116,28 +116,24 @@ public class ConfigInfoController {
     }
 
     @GetMapping(value = "/string")
-//    @AccessLimit(sec = 10)
+    @AccessLimit(sec = 10)
     public Result string(HttpServletRequest request) throws InterruptedException {
 
         Map<String, Object> parameter = getParameter(request);
         log.info("parameter:{}", JacksonUtil.toJson(parameter));
 
         RateLimiter rateLimiter = RateLimiter.create(1.0);
-        TimeUnit.SECONDS.sleep(20);
         log.info("urI:{}", request.getRequestURI());
         log.info("url:{}", request.getRequestURL().toString());
         StringBuffer url = request.getRequestURL();
         String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getSession().getServletContext().getContextPath()).toString();
         log.info("tempContextUrl:{}", tempContextUrl);
         log.info("============");
-//        ThreadPoolUtils.execute(() ->{
-//
-//            log.info("测试日志id");
-//        });
         MDCEXECUTORS.execute(() -> {
             log.info("测试日志id2");
         });
-        return Result.success("哈哈");
+
+        return Result.success(Arrays.asList(100L,333L));
     }
 
     @GetMapping("/error")
@@ -156,8 +152,12 @@ public class ConfigInfoController {
         if (0 == id) {
             throw new BizException(ResponseCodeI18n.FAILED);
         }
-        int i = 1 / 0;
         return "hhhh";
+    }
+
+    @GetMapping("/long")
+    public Long longs() {
+        return 100000L;
     }
 
 

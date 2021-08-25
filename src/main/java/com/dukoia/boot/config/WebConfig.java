@@ -38,37 +38,6 @@
 //@EnableWebMvc
 //public class WebConfig extends WebMvcConfigurationSupport {
 //
-//    @Override
-//    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-////        for (Iterator<HttpMessageConverter<?>> iterator = converters.iterator(); iterator.hasNext(); ) {
-////            HttpMessageConverter<?> next = iterator.next();
-////            if (next instanceof StringHttpMessageConverter) {
-////                iterator.remove();
-////            }
-////        }
-//        // 解决controller返回字符串中文乱码问题
-//        for (HttpMessageConverter<?> converter : converters) {
-//            if (converter instanceof StringHttpMessageConverter) {
-//                ((StringHttpMessageConverter)converter).setDefaultCharset(StandardCharsets.UTF_8);
-//            }
-//        }
-//    }
-//
-//    //2.1：解决中文乱码后，返回json时可能会出现No converter found for return value of type: xxxx
-//    //或这个：Could not find acceptable representation
-//    //解决此问题如下
-//    public ObjectMapper getObjectMapper() {
-//        return new ObjectMapper();
-//    }
-//
-//    //2.2：解决No converter found for return value of type: xxxx
-//    public MappingJackson2HttpMessageConverter messageConverter() {
-//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-//
-//        converter.setObjectMapper(getObjectMapper());
-//        return converter;
-//    }
-//
 //
 //    @Bean
 //    public HttpMessageConverter<String> responseBodyConverter() {
@@ -82,14 +51,10 @@
 //    @Override
 //    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 //
-////        super.configureMessageConverters(converters);
-//        converters.add(responseBodyConverter());
 //        converters.add(longToStringConverter());
-//        converters.add(messageConverter());
 //        // 这里必须加上加载默认转换器，不然bug玩死人，并且该bug目前在网络上似乎没有解决方案
 //        // 百度，谷歌，各大论坛等。你可以试试去掉。如果这段代码，spring启动后消息转换器只有StringHttpMessageConverter这一个
 //        super.addDefaultHttpMessageConverters(converters);
-////        extendMessageConverters(converters);
 //    }
 //
 //    @Override
@@ -131,13 +96,4 @@
 //        return converter;
 //    }
 //
-////    @Override
-////    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-////        // 解决controller返回字符串中文乱码问题
-////        for (HttpMessageConverter<?> converter : converters) {
-////            if (converter instanceof StringHttpMessageConverter) {
-////                ((StringHttpMessageConverter)converter).setDefaultCharset(StandardCharsets.UTF_8);
-////            }
-////        }
-////    }
 //}
