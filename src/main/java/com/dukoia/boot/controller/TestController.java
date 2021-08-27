@@ -20,7 +20,7 @@ import java.util.List;
 public class TestController {
 
     @GetMapping("/error")
-    public Object error() throws InterruptedException {
+    public String error() throws InterruptedException {
         log.info("thread:{} come in", Thread.currentThread().getName());
         return "真好";
     }
