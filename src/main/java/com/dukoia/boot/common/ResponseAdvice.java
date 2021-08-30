@@ -47,7 +47,6 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             // 由于某种原因导致的我菜,故在这里将原有的
             // return objectMapper.writeValueAsString(Result.success(o));
             // 改写成下面的逻辑
-
             ServletServerHttpResponse response = (ServletServerHttpResponse)serverHttpResponse;
             OutputStream body = response.getBody();
             body.write(JacksonUtil.toJson(Result.success(o)).getBytes());

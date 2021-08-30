@@ -13,4 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICommonMemberService extends IService<CommonMember> {
 
+    /**
+     * 多个更新
+     * @throws Exception
+     */
+    void mutiUpdate() throws Exception;
+
 }

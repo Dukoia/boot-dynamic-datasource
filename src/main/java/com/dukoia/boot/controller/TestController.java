@@ -22,7 +22,7 @@ public class TestController {
     @GetMapping("/error")
     public String error() throws InterruptedException {
         log.info("thread:{} come in", Thread.currentThread().getName());
-        return "真好";
+        return "hello word";
     }
 
     @GetMapping("/error1")
