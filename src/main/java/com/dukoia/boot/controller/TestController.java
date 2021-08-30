@@ -20,9 +20,9 @@ import java.util.List;
 public class TestController {
 
     @GetMapping("/error")
-    public String error() throws InterruptedException {
+    public Long error() throws InterruptedException {
         log.info("thread:{} come in", Thread.currentThread().getName());
-        return "hello word";
+        return 55555L;
     }
 
     @GetMapping("/error1")
