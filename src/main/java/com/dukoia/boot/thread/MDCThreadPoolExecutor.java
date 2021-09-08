@@ -52,6 +52,14 @@ public class MDCThreadPoolExecutor extends ThreadPoolExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
     }
 
+//    public void showInfo(){
+//        long taskCount = super.getTaskCount();
+//        long count = super.getCompletedTaskCount();
+//        int activeCount = super.getActiveCount();
+//        int size = super.getQueue().size();
+//        log.info("taskCount [{}], completedTaskCount [{}], activeCount [{}], queueSize [{}]",taskCount,count,activeCount,size);
+//    }
+
     @Override
     public void execute(final Runnable runnable) {
         // 获取父线程MDC中的内容，必须在run方法之前，否则等异步线程执行的时候有可能MDC里面的值已经被清空了，这个时候就会返回null

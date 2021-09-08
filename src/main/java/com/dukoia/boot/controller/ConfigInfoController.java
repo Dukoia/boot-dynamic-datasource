@@ -48,7 +48,7 @@ public class ConfigInfoController {
     private List<UserInfo> list;
 
     private static final MDCThreadPoolExecutor MDCEXECUTORS =
-            new MDCThreadPoolExecutor(1,
+            new MDCThreadPoolExecutor(5,
                     10,
                     60,
                     TimeUnit.SECONDS,
@@ -129,9 +129,20 @@ public class ConfigInfoController {
         String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getSession().getServletContext().getContextPath()).toString();
         log.info("tempContextUrl:{}", tempContextUrl);
         log.info("============");
+
+        CompletableFuture.runAsync(() ->{
+                    log.info("测试 CompletableFuture");
+                },MDCEXECUTORS);
+
         MDCEXECUTORS.execute(() -> {
             log.info("测试日志id2");
         });
+
+        for (int i = 0; i < 5; i++) {
+            MDCEXECUTORS.execute(() -> {
+                log.info("for each");
+            });
+        }
 
         return Result.success(Arrays.asList(100L,333L));
     }

@@ -43,7 +43,7 @@ public class PushLargeDate {
                 String line = iterator.nextLine();
                 lines.add(line);
                 // 设置每个线程执行的行数
-                if (lines.size() == 1000) {
+                if (lines.size() == 10) {
                     // 新建异步任务，注意这里需要创建一个 List
                     tasks.add(new ConvertTask(Lists.newArrayList(lines)));
                     lines.clear();
@@ -59,7 +59,7 @@ public class PushLargeDate {
             asyncBatchExecuteTask(tasks);
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             executorService.shutdown();
         }
     }

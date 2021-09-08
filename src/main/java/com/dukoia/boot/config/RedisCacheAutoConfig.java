@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +23,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisCacheAutoConfig {
 
-    @Bean("redisTemplate")
+    @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
 
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        template.setEnableDefaultSerializer(false);
+
         template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
@@ -39,8 +46,9 @@ public class RedisCacheAutoConfig {
      * @return
      */
     @Bean
-    public HashOperations<String, String, Object> hashOperations(RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForHash();
+    public HashOperations<String, Object, Object> hashOperations(RedisTemplate<String, Object> redisTemplate) {
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        return hashOperations;
     }
 
     /**

@@ -1,10 +1,16 @@
 package com.dukoia.boot;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import com.dukoia.boot.common.ResponseCodeI18n;
 import com.dukoia.boot.model.UserInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Stream;
 
 /**
  * @Description: Main
@@ -17,11 +23,29 @@ public class Main {
     public static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     public static void main(String[] args) throws Exception {
-        future();
-//        System.out.println(isUnique("nihaoa"));
-        future2();
 
-        System.out.println(773 << 1 & 773);
+        String total = "857";
+        String success = "109";
+        Long fail = 3L;
+
+        System.out.println((fail + Long.valueOf(success)) == Long.valueOf(total));
+
+        double d = (fail + Long.valueOf(success)) / Double.valueOf(total);
+        System.out.println(String.format("%.2f", d * 100));
+
+//        MyClassA myClassA = new MyClassA();
+//        MyClassB myClassB = new MyClassB();
+//        MyInterface myClass1 = new MyClassB();
+//        System.out.println(myClassA.getSum());
+//        System.out.println(testInterface(myClassA));
+//        System.out.println(testInterface(myClassB));
+//        System.out.println(testInterface(myClass1));
+//        future();
+//        System.out.println(isUnique("nihaoa"));
+//        future2();
+//        List<Integer> integers = Arrays.asList(1, 2, 1, 5, 1);
+//        System.out.println(Stream.of(integers) .count());
+//        System.out.println(773 << 1 & 773);
 //        ArrayList<UserInfo> userInfos = new ArrayList<>();
 //        userInfos.add(new UserInfo());
 //        long count = userInfos.stream().map(UserInfo::getId).distinct().count();
@@ -33,6 +57,9 @@ public class Main {
 //        }
     }
 
+    public static String testInterface(MyInterface myInterface) {
+        return myInterface.classMethod();
+    }
 
     private static void future2() throws InterruptedException, java.util.concurrent.ExecutionException {
         CompletableFuture<String> string = CompletableFuture.supplyAsync(() -> {

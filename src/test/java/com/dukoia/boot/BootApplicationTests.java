@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dukoia.boot.content.UserContent;
 import com.dukoia.boot.mapper.ConfigInfoMapper;
 import com.dukoia.boot.model.ConfigInfoDO;
+import com.dukoia.boot.model.ForumDto;
 import com.dukoia.boot.model.PromoteImageDO;
 import com.dukoia.boot.model.UserInfo;
 import com.dukoia.boot.service.ConfigInfoService;
@@ -15,10 +16,20 @@ import com.dukoia.boot.utils.JacksonUtil;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.DocWriteRequest;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -27,20 +38,22 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SpringBootTest
 @Slf4j
@@ -48,6 +61,9 @@ class BootApplicationTests {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
     @Autowired
     PromoteImageService promoteImageService;
 
@@ -68,11 +84,15 @@ class BootApplicationTests {
 
     @Test
     @DS("master")
-    public void apply(){
+    public void apply() {
         QueryWrapper<ConfigInfoDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.apply("YEAR(gmt_create) = {0}",2019).orderByAsc("gmt_create").last("limit 1");
+        queryWrapper.apply("YEAR(gmt_create) = {0}", 2019).orderByAsc("gmt_create").last("limit 1");
 
         List<ConfigInfoDO> list = configInfoMapper.list(queryWrapper);
+        Map<String, List<String>> collect = list.stream().collect(
+                Collectors.groupingBy(ConfigInfoDO::getAppName,
+                        Collectors.mapping(ConfigInfoDO::getAppName, Collectors.toList())));
+
         System.out.println(list);
     }
 
@@ -177,26 +197,61 @@ class BootApplicationTests {
     @Test
     @DS("master")
     public void addDoc() {
-        Date date = new Date();
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(date + "--" + now);
-        @NotBlank String s = "";
+//        Date date = new Date();
+//        LocalDateTime now = LocalDateTime.now();
+//        System.out.println(date + "--" + now);
+//        @NotBlank String s = "";
 
         System.out.println("========");
-//        List<ForumDto> forums = configInfoMapper.get();
-//
-//        BulkRequest request = new BulkRequest();
-//        IndexRequest indexRequest;
-//        for (ForumDto tid : forums) {
-//
-//            indexRequest = new IndexRequest("forum", "_doc", String.valueOf(tid.getId())).source(JSONUtil.toJsonStr(tid),XContentType.JSON);
-//            request.add(indexRequest);
-//        }
-//        try {
-//            restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
-//        } catch (IOException e) {
-//            log.error("批量更新用户帖子失败", e);
-//        }
+        ForumDto forumDto = new ForumDto();
+        forumDto.setDateline(1630487413);
+        forumDto.setAuthor("dukoia");
+        forumDto.setSubject("你好");
+        forumDto.setAuthorid(11);
+        forumDto.setMessage("批量更新用户帖子失败");
+        forumDto.setReplies(10);
+        forumDto.setId(9827);
+        forumDto.setLikes(10);
+        forumDto.setViews(300);
+
+        List<ForumDto> forums = Arrays.asList(forumDto);
+
+        BulkRequest request = new BulkRequest();
+        IndexRequest indexRequest;
+        for (ForumDto tid : forums) {
+
+            indexRequest = new IndexRequest("forum", "_doc", String.valueOf(tid.getId())).source(JSONUtil.toJsonStr(tid), XContentType.JSON);
+            request.add(indexRequest);
+        }
+        try {
+            BulkResponse bulk = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+
+            for (BulkItemResponse bulkItemResponse : bulk) {
+
+                if (bulkItemResponse.isFailed()) {
+                    BulkItemResponse.Failure failure = bulkItemResponse.getFailure();
+                    log.error("===========插入或者更新 执行结果 添加文档失败 {}===========", failure);
+                    continue;
+                }
+
+                DocWriteResponse itemResponse = bulkItemResponse.getResponse();
+                if (bulkItemResponse.getOpType() == DocWriteRequest.OpType.INDEX || bulkItemResponse.getOpType() == DocWriteRequest.OpType.CREATE) {
+                    IndexResponse indexResponse = (IndexResponse) itemResponse;
+                    log.info("===========插入或者更新 执行结果 {}===========", indexResponse);
+
+                } else if (bulkItemResponse.getOpType() == DocWriteRequest.OpType.UPDATE) {
+                    UpdateResponse updateResponse = (UpdateResponse) itemResponse;
+                    log.info("===========更新 执行结果 {}===========", updateResponse);
+
+                } else if (bulkItemResponse.getOpType() == DocWriteRequest.OpType.DELETE) {
+                    DeleteResponse deleteResponse = (DeleteResponse) itemResponse;
+                    log.info("===========删除 执行结果 {}===========", deleteResponse);
+
+                }
+            }
+        } catch (IOException e) {
+            log.error("批量更新用户帖子失败", e);
+        }
     }
 
     @Test
@@ -206,7 +261,7 @@ class BootApplicationTests {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         //搜索方式 在[subject, message]字段上搜索，匹配度=50%、将标题得分提高10倍
-        MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery("美国", "subject", "message").field("subject",50);
+        MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery("美国", "subject", "message").field("subject", 50);
 
         searchSourceBuilder.query(multiMatchQueryBuilder);
 
@@ -235,18 +290,27 @@ class BootApplicationTests {
         System.out.println(search);
     }
 
+    @Autowired
+    ValueOperations valueOperations;
+
     @Test
     public void redis() {
-        HashOperations hashOperations = redisTemplate.opsForHash();
-        ValueOperations valueOperations = redisTemplate.opsForValue();
-        valueOperations.set("hello", "hello");
+//        HashOperations hashOperations = redisTemplate.opsForHash();
+//        ValueOperations valueOperations = redisTemplate.opsForValue();
+//        stringRedisTemplate.opsForValue().increment("hello",1);
+        for (int i = 0; i < 10; i++) {
 
-        System.out.println(valueOperations.get("hello"));
+            valueOperations.increment("hello",1L);
+        }
 
-        hashOperations.put("dukoia", "name", "dukoia123");
-        System.out.println(hashOperations.get("dukoia", "age"));
-        Map dukoia = hashOperations.entries("dukoia");
-        System.out.println(dukoia);
+//        valueOperations.set("hello", "hello");
+//
+//        System.out.println(valueOperations.get("hello"));
+//
+//        hashOperations.put("dukoia", "name", "dukoia123");
+//        System.out.println(hashOperations.get("dukoia", "age"));
+//        Map dukoia = hashOperations.entries("dukoia");
+//        System.out.println(dukoia);
 
     }
 
