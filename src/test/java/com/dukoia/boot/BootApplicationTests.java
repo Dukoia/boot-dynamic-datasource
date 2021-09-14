@@ -1,14 +1,13 @@
 package com.dukoia.boot;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dukoia.boot.content.UserContent;
+import com.dukoia.boot.mapper.CnareaMapper;
 import com.dukoia.boot.mapper.ConfigInfoMapper;
-import com.dukoia.boot.model.ConfigInfoDO;
-import com.dukoia.boot.model.ForumDto;
-import com.dukoia.boot.model.PromoteImageDO;
-import com.dukoia.boot.model.UserInfo;
+import com.dukoia.boot.model.*;
 import com.dukoia.boot.service.ConfigInfoService;
 import com.dukoia.boot.service.IUserInfoService;
 import com.dukoia.boot.service.PromoteImageService;
@@ -47,12 +46,10 @@ import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 @SpringBootTest
@@ -81,6 +78,61 @@ class BootApplicationTests {
 
     @Autowired
     IUserInfoService iUserInfoService;
+    @Autowired
+    CnareaMapper cnareaMapper;
+
+    @Test
+    @DS("master")
+    public void area(){
+        List<CnareaDO> cnareaDOS = cnareaMapper.queryByAreaCode(110101017000L);
+
+        Map<Long, List<CnareaDO>> collect = cnareaDOS.stream().collect(Collectors.groupingBy(p -> p.getParentCode()));
+
+        Long minId = collect.keySet().stream().min((x, y) -> x.compareTo(y)).get();
+        System.out.println(minId);
+
+        List<Object> objects = new ArrayList<>();
+
+        for (CnareaDO aDo : collect.get(minId)) {
+            objects.add(zizi(aDo, collect));
+        }
+
+//        Object zizi = zizi(cnareaDO, collect);
+        System.out.println(JSONUtil.toJsonStr(objects));
+//        System.out.println(JSONUtil.toJsonStr(collect));
+    }
+
+    @Test
+    @DS("master")
+    public void area1(){
+        List<CnareaDO> cnareaDOS = cnareaMapper.queryByAreaCodeAsParentCode(110101000000L);
+
+        Map<Long, List<CnareaDO>> collect = cnareaDOS.stream().collect(Collectors.groupingBy(p -> p.getParentCode()));
+
+        Long minId = collect.keySet().stream().min((x, y) -> x.compareTo(y)).get();
+        System.out.println(minId);
+
+        List<Object> objects = new ArrayList<>();
+
+        for (CnareaDO aDo : collect.get(minId)) {
+            objects.add(zizi(aDo, collect));
+        }
+//        Object zizi = zizi(cnareaDO, collect);
+        System.out.println(JSONUtil.toJsonStr(objects));
+//        System.out.println(JSONUtil.toJsonStr(collect));
+    }
+
+    private CnareaDO zizi(CnareaDO cnareaDO, Map<Long, List<CnareaDO>> collect){
+        List<CnareaDO> cnareaDOS = collect.get(cnareaDO.getAreaCode());
+        if (CollectionUtil.isNotEmpty(cnareaDOS)){
+            for (CnareaDO aDo : cnareaDOS) {
+                zizi(aDo,collect);
+            }
+        }
+        cnareaDO.setCnareaDOS(collect.get(cnareaDO.getAreaCode()));
+        return cnareaDO;
+    }
+
 
     @Test
     @DS("master")

@@ -28,7 +28,7 @@ public class MpGenerator {
     private static String dbUrl = "rm-2zen0a0g63p5r3xu5ho.mysql.rds.aliyuncs.com";
     private static String dbSchema = "db_pico_bbs_prod";
     private static String dbUserName = "bbs_prod";
-    private static String dbPwd = "sDsd33$4hdagHdsa@1hg";
+    private static String dbPwd = "sDsd33$4h1dagHdsa@1hg";
 
     /**
      * <p>

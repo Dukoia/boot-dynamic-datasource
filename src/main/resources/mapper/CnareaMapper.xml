@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dukoia.boot.mapper.CnareaMapper">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.dukoia.boot.model.CnareaDO">
+                    <id column="id" property="id"/>
+                    <result column="level" property="level"/>
+                    <result column="parent_code" property="parentCode"/>
+                    <result column="area_code" property="areaCode"/>
+                    <result column="zip_code" property="zipCode"/>
+                    <result column="city_code" property="cityCode"/>
+                    <result column="name" property="name"/>
+                    <result column="short_name" property="shortName"/>
+                    <result column="merger_name" property="mergerName"/>
+                    <result column="pinyin" property="pinyin"/>
+                    <result column="lng" property="lng"/>
+                    <result column="lat" property="lat"/>
+        </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, level, parent_code, area_code, zip_code, city_code, name, short_name, merger_name, pinyin, lng, lat
+    </sql>
+    <select id="queryByAreaCode" resultType="com.dukoia.boot.model.CnareaDO">
+
+        WITH RECURSIVE r_t AS (
+            SELECT s1.*
+            FROM cnarea s1
+            WHERE s1.area_code = #{areaCode}
+            UNION ALL
+            SELECT s2.*
+            FROM cnarea s2
+                     INNER JOIN r_t ON r_t.area_code = s2.parent_code
+        )
+        SELECT *
+        FROM r_t;
+    </select>
+    <select id="queryByAreaCodeAsParentCode" resultType="com.dukoia.boot.model.CnareaDO">
+        WITH RECURSIVE r_t AS (
+            SELECT s1.*
+            FROM cnarea s1
+            WHERE s1.parent_code = #{areaCode}
+            UNION ALL
+            SELECT s2.*
+            FROM cnarea s2
+                     INNER JOIN r_t ON r_t.area_code = s2.parent_code
+        )
+        SELECT *
+        FROM r_t;
+    </select>
+
+
+</mapper>
