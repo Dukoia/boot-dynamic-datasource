@@ -8,6 +8,16 @@ package com.dukoia.boot;
  */
 public class MyClassA implements MyInterface{
 
+    private Integer name;
+
+    public Integer getName() {
+        return name;
+    }
+
+    public void setName(Integer name) {
+        this.name = name;
+    }
+
     public String classMethod(){
         return "MyClassA";
     }

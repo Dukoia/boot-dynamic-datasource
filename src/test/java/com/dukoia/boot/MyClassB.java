@@ -8,6 +8,16 @@ package com.dukoia.boot;
  */
 public class MyClassB implements MyInterface{
 
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String classMethod(){
         return "MyClassB";
     }
